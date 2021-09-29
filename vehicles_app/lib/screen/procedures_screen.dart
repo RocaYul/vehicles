@@ -1,8 +1,9 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unnecessary_string_interpolations
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vehicles_app/components/loader_component.dart';
 import 'package:vehicles_app/helpers/constanst.dart';
 import 'package:vehicles_app/models/procedure.dart';
@@ -37,7 +38,11 @@ class _ProceduresScreenState extends State<ProceduresScreen> {
             ? LoaderComponent(
                 text: 'Por favor espere ...',
               )
-            : Text('Procedimientos'),
+            : _getContent(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {},
       ),
     );
   }
@@ -66,5 +71,62 @@ class _ProceduresScreenState extends State<ProceduresScreen> {
         _procedures.add(Procedure.fromJson(item));
       }
     }
+  }
+
+  Widget _getContent() {
+    return _procedures.length == 0 ? _noContent() : _getListView();
+  }
+
+  Widget _getListView() {
+    return ListView(
+      children: _procedures.map((e) {
+        return Card(
+          child: InkWell(
+              onTap: () {},
+              child: Container(
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          e.description,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios)
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '${NumberFormat.currency(symbol: '\$').format(e.price)}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _noContent() {
+    return Container(
+      margin: EdgeInsets.all(20),
+      child: Center(
+        child: Text(
+          "No hay procedimientos almacenados.",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 }
