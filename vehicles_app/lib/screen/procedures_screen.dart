@@ -9,6 +9,7 @@ import 'package:vehicles_app/helpers/constanst.dart';
 import 'package:vehicles_app/models/procedure.dart';
 import 'package:vehicles_app/models/token.dart';
 import 'package:http/http.dart' as http;
+import 'package:vehicles_app/screen/prodecures_screen.dart';
 
 class ProceduresScreen extends StatefulWidget {
   final Token token;
@@ -42,7 +43,15 @@ class _ProceduresScreenState extends State<ProceduresScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProcedureScreen(
+                    token: widget.token,
+                    procedure: Procedure(id: 0, description: "", price: 0))),
+          );
+        },
       ),
     );
   }
@@ -82,7 +91,14 @@ class _ProceduresScreenState extends State<ProceduresScreen> {
       children: _procedures.map((e) {
         return Card(
           child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ProcedureScreen(token: widget.token, procedure: e)),
+                );
+              },
               child: Container(
                 margin: EdgeInsets.all(10),
                 padding: EdgeInsets.all(10),
