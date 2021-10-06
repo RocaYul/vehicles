@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vehicles_app/helpers/constanst.dart';
+import 'package:vehicles_app/models/brand.dart';
 import 'package:vehicles_app/models/procedure.dart';
 import 'package:vehicles_app/models/response.dart';
 
@@ -84,5 +85,31 @@ class ApiHelper {
       return Response(isSuccess: false, message: response.body);
     }
     return Response(isSuccess: true);
+  }
+
+  static Future<Response> getBrands(String token) async {
+    var url = Uri.parse('${Constanst.apiUrl}/api/Brands');
+    var response = await http.get(
+      url,
+      headers: {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+        'authorization': 'bearer $token',
+      },
+    );
+    var body = response.body;
+    if (response.statusCode >= 400) {
+      return Response(isSuccess: false, message: body);
+    }
+
+    List<Brand> list = [];
+    var decodedJson = jsonDecode(body);
+    if (decodedJson != null) {
+      for (var item in decodedJson) {
+        list.add(Brand.fromJson(item));
+      }
+    }
+
+    return Response(isSuccess: true, result: list);
   }
 }

@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ButtonStyle(backgroundColor:
                       MaterialStateProperty.resolveWith<Color>(
                           (Set<MaterialState> states) {
-                    return Color(0xFF00AC61);
+                    return Colors.transparent;
                   })),
                   onPressed: () => _login(),
                   child: Text("Iniciar sesión"))),
