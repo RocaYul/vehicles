@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class DisplayPictureScreen extends StatefulWidget {
@@ -15,6 +17,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
       appBar: AppBar(
         title: Text('Vista previa de la foto'),
       ),
+      body: Image.file(File(widget.imagePath)),
     );
   }
 }
