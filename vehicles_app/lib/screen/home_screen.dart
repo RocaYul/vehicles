@@ -3,8 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:vehicles_app/models/token.dart';
 import 'package:vehicles_app/screen/brands_screen.dart';
+import 'package:vehicles_app/screen/document_types_screen.dart';
 import 'package:vehicles_app/screen/login_screen.dart';
 import 'package:vehicles_app/screen/procedures_screen.dart';
+import 'package:vehicles_app/screen/users_screen.dart';
+import 'package:vehicles_app/screen/vehicule_types_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Token token;
@@ -43,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 fit: BoxFit.cover),
           ),
           Text(
-            'Bienvenid@ ${widget.token.user.fullname}',
+            'Bienvenid@ ${widget.token.user.fullName}',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
@@ -83,15 +86,33 @@ class _HomeScreenState extends State<HomeScreen> {
           ListTile(
               leading: Icon(Icons.badge),
               title: Text("Tipos de documento"),
-              onTap: () {}),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DocumentTypesScreen(token: widget.token)));
+              }),
           ListTile(
               leading: Icon(Icons.toys),
               title: Text("Tipos de vehiculos"),
-              onTap: () {}),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            VehiculeTypesScreen(token: widget.token)));
+              }),
           ListTile(
               leading: Icon(Icons.people),
               title: Text("Usuario"),
-              onTap: () {}),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            UsersScreen(token: widget.token)));
+              }),
           Divider(color: Colors.black, height: 3),
           ListTile(
               leading: Icon(Icons.face),

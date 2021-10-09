@@ -33,15 +33,17 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _showLogo(),
-              _showEmail(),
-              _showPassword(),
-              _showRemenberme(),
-              _showButtons()
-            ],
+          SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _showLogo(),
+                _showEmail(),
+                _showPassword(),
+                _showRemenberme(),
+                _showButtons()
+              ],
+            ),
           ),
           _showLoader
               ? LoaderComponent(

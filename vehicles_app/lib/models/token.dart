@@ -14,12 +14,13 @@ class Token {
       imageId: "",
       imageFullPath: "",
       userType: 0,
-      fullname: "",
+      fullName: "",
       vehiclesCount: 0,
       id: "",
       userName: "",
       email: "",
-      phoneNumber: "");
+      phoneNumber: "",
+      vehicles: []);
 
   Token({required this.token, required this.expiration, required this.user});
 
