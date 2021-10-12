@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
+import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,7 @@ import 'package:vehicles_app/models/document_type.dart';
 import 'package:vehicles_app/models/response.dart';
 import 'package:vehicles_app/models/token.dart';
 import 'package:vehicles_app/models/user.dart';
+import 'package:vehicles_app/screen/take_picture_screen.dart';
 
 class UserScreen extends StatefulWidget {
   final Token token;
@@ -23,6 +26,8 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   bool _showLoader = false;
+  bool _photoChange = false;
+  late XFile _image;
 
   String _firsName = "";
   String _firsNameError = "";
@@ -266,7 +271,7 @@ class _UserScreenState extends State<UserScreen> {
 
     if (!response.isSuccess) {
       await showAlertDialog(
-          context: context,
+          context: context as BuildContext,
           title: 'Error',
           message: response.message,
           actions: <AlertDialogAction>[
@@ -275,7 +280,7 @@ class _UserScreenState extends State<UserScreen> {
       return;
     }
 
-    Navigator.pop(context, 'yes');
+    Navigator.pop(context as BuildContext, 'yes');
   }
 
   _saveRecord() async {
@@ -304,7 +309,7 @@ class _UserScreenState extends State<UserScreen> {
 
     if (!response.isSuccess) {
       await showAlertDialog(
-          context: context,
+          context: context as BuildContext,
           title: 'Error',
           message: response.message,
           actions: <AlertDialogAction>[
@@ -313,12 +318,12 @@ class _UserScreenState extends State<UserScreen> {
       return;
     }
 
-    Navigator.pop(context, 'yes');
+    Navigator.pop(context as BuildContext, 'yes');
   }
 
   void _confirmDelete() async {
     var response = await showAlertDialog(
-        context: context,
+        context: context as BuildContext,
         title: 'Confirmación',
         message: 'Estas seguro que quieres eliminar el registro',
         actions: <AlertDialogAction>[
@@ -344,7 +349,7 @@ class _UserScreenState extends State<UserScreen> {
 
     if (!response.isSuccess) {
       await showAlertDialog(
-          context: context,
+          context: context as BuildContext,
           title: 'Error',
           message: response.message,
           actions: <AlertDialogAction>[
@@ -352,25 +357,54 @@ class _UserScreenState extends State<UserScreen> {
           ]);
       return;
     }
-    Navigator.pop(context, 'yes');
+    Navigator.pop(context as BuildContext, 'yes');
   }
 
   Widget _showPhoto() {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      child: widget.user.id.isEmpty
-          ? Image(
-              image: AssetImage('assets/imagen.png'), height: 160, width: 160)
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(80),
-              child: FadeInImage(
-                placeholder: AssetImage('assets/images.jpg'),
-                image: NetworkImage(widget.user.imageFullPath),
-                width: 160,
-                height: 160,
-                fit: BoxFit.cover,
+    return InkWell(
+      onTap: () => _takePicture(),
+      child: Stack(children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: 10),
+          child: widget.user.id.isEmpty && !_photoChange
+              ? Image(
+                  image: AssetImage('assets/imagen.png'),
+                  height: 160,
+                  width: 160,
+                  fit: BoxFit.cover,
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(80),
+                  child: _photoChange
+                      ? Image.file(File(_image.path),
+                          height: 160, width: 160, fit: BoxFit.cover)
+                      : FadeInImage(
+                          placeholder: AssetImage('assets/images.jpg'),
+                          image: NetworkImage(widget.user.imageFullPath),
+                          width: 160,
+                          height: 160,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 100,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: Container(
+              color: Colors.green[50],
+              height: 60,
+              width: 60,
+              child: Icon(
+                Icons.photo_camera,
+                size: 50,
+                color: Colors.blue,
               ),
             ),
+          ),
+        )
+      ]),
     );
   }
 
@@ -488,7 +522,7 @@ class _UserScreenState extends State<UserScreen> {
 
     if (!response.isSuccess) {
       await showAlertDialog(
-          context: context,
+          context: context as BuildContext,
           title: 'Error',
           message: response.message,
           actions: <AlertDialogAction>[
@@ -535,5 +569,21 @@ class _UserScreenState extends State<UserScreen> {
           child: Text(documentType.description), value: documentType.id));
     });
     return list;
+  }
+
+  void _takePicture() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final cameras = await availableCameras();
+    final fisrtCamera = cameras.first;
+    Response? response = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TakePictureScreen(camera: fisrtCamera)));
+    if (response != null) {
+      setState(() {
+        _photoChange = true;
+        _image = response.result;
+      });
+    }
   }
 }

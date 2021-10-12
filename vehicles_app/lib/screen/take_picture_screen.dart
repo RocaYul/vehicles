@@ -1,5 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:vehicles_app/models/response.dart';
+import 'package:vehicles_app/screen/display_picture_screen.dart';
 
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -29,14 +32,36 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Tomar foto')),
-        body: FutureBuilder<void>(
+      appBar: AppBar(title: Text('Tomar foto')),
+      body: FutureBuilder<void>(
         future: _initializeControllerFuture,
-        builder: (context, snapshot){
-          if(snapshot.connectionState == con)
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CameraPreview(_controller);
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
-          ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.camera_alt),
+        onPressed: () async {
+          try {
+            await _initializeControllerFuture;
+            final image = await _controller.takePicture();
+            Response? reponse = await Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => DisplayPictureScreen(image: image)));
+            if (reponse != null) {
+              Navigator.pop(context, reponse);
+            }
+          } catch (e) {
+            print(e);
+          }
+        },
+      ),
     );
   }
 }
